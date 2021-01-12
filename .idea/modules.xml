@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/adv_image_cache.iml" filepath="$PROJECT_DIR$/adv_image_cache.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/adv_image_cache_android.iml" filepath="$PROJECT_DIR$/android/adv_image_cache_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example/android/adv_image_cache_example_android.iml" filepath="$PROJECT_DIR$/example/android/adv_image_cache_example_android.iml" />
+    </modules>
+  </component>
+</project>
