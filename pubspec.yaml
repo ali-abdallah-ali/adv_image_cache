@@ -1,6 +1,6 @@
 name: adv_image_cache
 description: network image laod with cache rules , and handy cache manager
-version: 0.1.0
+version: 0.1.1
 author: Ali ABDALLAH  alisayed@gmail.com
 homepage: https://github.com/ali-abdallah-ali
 
