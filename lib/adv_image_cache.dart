@@ -17,6 +17,7 @@ import 'adv_image_cache_mgr.dart';
 class AdvImageCache extends ImageProvider<AdvImageCache> {
   AdvImageCache(
     this.url, {
+    this.header,
     this.scale = 1.0,
     this.downloadRetry = 2,
     this.useMemCache = true,
@@ -26,6 +27,9 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
   }) : assert(url != null);
 
   String url;
+
+  ///http header
+  final Map<String, String> header;
 
   /// The scale to place in the [ImageInfo] object of the image.
   final double scale;
