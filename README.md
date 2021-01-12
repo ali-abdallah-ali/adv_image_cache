@@ -13,7 +13,8 @@ network image laod with cache rules , and handy cache manager
 
 
 
-Main class 'AdvImageCache' for image loading and cache rules
-Cache managent class 'AdvImageCacheMgr' , use to clear single items or clear all items
+Main class 'AdvImageCache' for image loading and cache rules.
+
+Cache managent class 'AdvImageCacheMgr' , use to clear single items or clear all items.
 
 
