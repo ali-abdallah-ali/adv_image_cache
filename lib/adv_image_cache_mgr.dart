@@ -25,6 +25,10 @@ class AdvImageCacheMgr {
       data = await _load(file, key);
     }
 
+    if (data.length > 0) {
+      _updateMemCache(key, data);
+    }
+
     return data;
   }
 
@@ -121,13 +125,6 @@ class AdvImageCacheMgr {
         final Uint8List bytes = await consolidateHttpClientResponseBytes(response, autoUncompress: false);
         if (bytes.length > 0) {
           file = await file.writeAsBytes(bytes);
-
-          if (key.useMemCache) {
-            String uid = key.url.hashCode.toString();
-            PaintingBinding.instance.imageCache.evict(uid);
-            PaintingBinding.instance.imageCache.putIfAbsent(uid, () => _loadImageCache(key, bytes));
-          }
-
           break;
         }
       }
@@ -136,6 +133,14 @@ class AdvImageCacheMgr {
     }
 
     return file.readAsBytesSync();
+  }
+
+  void _updateMemCache(AdvImageCache key, Uint8List bytes) {
+    if (key.useMemCache) {
+      String uid = key.url.hashCode.toString();
+      PaintingBinding.instance.imageCache.evict(uid);
+      PaintingBinding.instance.imageCache.putIfAbsent(uid, () => _loadImageCache(key, bytes));
+    }
   }
 
 //background cache update
