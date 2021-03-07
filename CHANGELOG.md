@@ -9,3 +9,7 @@
 
 ## 0.1.3
 * fix mem cache bug
+
+## 1.0.0-nullsafety
+* Add null safety support.
+

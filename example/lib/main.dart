@@ -112,15 +112,15 @@ class _MyAppState extends State<MyApp> {
                 ),
               ],
             ),
-            RaisedButton(onPressed: () => setState(() {}), child: Text("Reload and test cache rules")),
-            RaisedButton(
+            ElevatedButton(onPressed: () => setState(() {}), child: Text("Reload and test cache rules")),
+            ElevatedButton(
                 onPressed: () {
                   setState(() {
                     AdvImageCacheMgr().clearItem("https://picsum.photos/100/160");
                   });
                 },
                 child: Text("force cache clear for 1st Image")),
-            RaisedButton(
+            ElevatedButton(
               onPressed: () {
                 setState(() {
                   AdvImageCacheMgr().clearAllItems();

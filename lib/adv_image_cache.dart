@@ -24,12 +24,12 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
     this.diskCacheDirName = "AdvImageCache",
     this.diskCacheExpire = const Duration(days: 7),
     this.fallbackAssetImage,
-  }) : assert(url != null);
+  });
 
   String url;
 
   ///http header
-  final Map<String, String> header;
+  final Map<String, String>? header;
 
   /// The scale to place in the [ImageInfo] object of the image.
   final double scale;
@@ -47,20 +47,23 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
   final Duration diskCacheExpire;
 
   ///fail image
-  final String fallbackAssetImage;
+  final String? fallbackAssetImage;
 
-  Future<Codec> _downloadImage(AdvImageCache key) async {
+  Future<Codec?> _downloadImage(AdvImageCache key) async {
+    //get image form cache or download
     Uint8List data = await AdvImageCacheMgr().getFileData(key);
 
+    //if download image success
     if (data.length > 0) {
-      return await PaintingBinding.instance.instantiateImageCodec(data);
+      return await PaintingBinding.instance!.instantiateImageCodec(data);
     }
 
+    //if fallback image is set
     if (fallbackAssetImage != null) {
-      ByteData imageData = await rootBundle.load(key.fallbackAssetImage);
+      ByteData imageData = await rootBundle.load(key.fallbackAssetImage!);
       data = imageData.buffer.asUint8List();
 
-      return await PaintingBinding.instance.instantiateImageCodec(data);
+      return await PaintingBinding.instance!.instantiateImageCodec(data);
     }
 
     return null;
@@ -75,14 +78,20 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
   ImageStreamCompleter load(AdvImageCache key, DecoderCallback decode) {
     String uid = key.url.hashCode.toString();
 
-    if (key.useMemCache && PaintingBinding.instance.imageCache.containsKey(uid)) {
+    //in mem Cache
+    if (key.useMemCache && PaintingBinding.instance!.imageCache!.containsKey(uid)) {
+      //we will not call _downloadImage , so request background update
       AdvImageCacheMgr().cacheAutoUpdate(key);
-      return PaintingBinding.instance.imageCache.putIfAbsent(uid, () {
-        return null;
-      });
+      // we know it is there , so return dummy func to add
+      return PaintingBinding.instance!.imageCache!.putIfAbsent(
+          uid,
+          () {
+            return null;
+          } as ImageStreamCompleter Function())!;
     } else {
+      //not in mem , download and return
       return MultiFrameImageStreamCompleter(
-          codec: _downloadImage(key),
+          codec: _downloadImage(key) as Future<Codec>,
           scale: key.scale,
           informationCollector: () sync* {
             yield DiagnosticsProperty<ImageProvider>('Image provider', this);

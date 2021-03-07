@@ -17,9 +17,11 @@ class AdvImageCacheMgr {
     String uid = key.url.hashCode.toString();
     Uint8List data;
 
+    //search loacal copy
     final File file = await _getLocalFile(key.diskCacheDirName, uid);
     if (file.existsSync() && file.lengthSync() > 0) {
       data = file.readAsBytesSync();
+      //background update
       _cacheAutoUpdate(file, key);
     } else {
       data = await _load(file, key);
@@ -36,7 +38,7 @@ class AdvImageCacheMgr {
     try {
       String uid = url.hashCode.toString();
 
-      PaintingBinding.instance.imageCache.evict(uid);
+      PaintingBinding.instance!.imageCache!.evict(uid);
       final File file = await _getLocalFile(diskCacheDirName, uid);
       if (file.existsSync() && file.lengthSync() > 0) {
         file.deleteSync();
@@ -52,7 +54,7 @@ class AdvImageCacheMgr {
 
   Future<bool> clearAllItems({String diskCacheDirName = "AdvImageCache"}) async {
     try {
-      PaintingBinding.instance.imageCache.clear();
+      PaintingBinding.instance!.imageCache!.clear();
       Directory localDir = await _getLocalDir(diskCacheDirName);
       if (localDir.existsSync()) await localDir.delete(recursive: true);
 
@@ -93,7 +95,7 @@ class AdvImageCacheMgr {
 
   ImageStreamCompleter _loadImageCache(AdvImageCache key, Uint8List data) {
     return MultiFrameImageStreamCompleter(
-      codec: _loadCodec(data),
+      codec: _loadCodec(data) as Future<ui.Codec>,
       scale: key.scale,
       informationCollector: () sync* {
         yield DiagnosticsProperty<ImageProvider>('Image provider', key);
@@ -102,9 +104,9 @@ class AdvImageCacheMgr {
     );
   }
 
-  Future<ui.Codec> _loadCodec(Uint8List data) async {
-    if ((data != null) && (data.length > 0)) {
-      return PaintingBinding.instance.instantiateImageCodec(data);
+  Future<ui.Codec?> _loadCodec(Uint8List data) async {
+    if (data.length > 0) {
+      return PaintingBinding.instance!.instantiateImageCodec(data);
     }
 
     return null;
@@ -119,7 +121,7 @@ class AdvImageCacheMgr {
         HttpClient httpClient = HttpClient();
         final HttpClientRequest request = await httpClient.getUrl(Uri.parse(key.url));
         if (key.header != null) {
-          key.header.forEach((k, v) => request.headers.add(k, v));
+          key.header!.forEach((k, v) => request.headers.add(k, v));
         }
         final HttpClientResponse response = await request.close();
         final Uint8List bytes = await consolidateHttpClientResponseBytes(response, autoUncompress: false);
@@ -136,10 +138,11 @@ class AdvImageCacheMgr {
   }
 
   void _updateMemCache(AdvImageCache key, Uint8List bytes) {
+    //if we are using mem cache
     if (key.useMemCache) {
       String uid = key.url.hashCode.toString();
-      PaintingBinding.instance.imageCache.evict(uid);
-      PaintingBinding.instance.imageCache.putIfAbsent(uid, () => _loadImageCache(key, bytes));
+      PaintingBinding.instance!.imageCache!.evict(uid);
+      PaintingBinding.instance!.imageCache!.putIfAbsent(uid, () => _loadImageCache(key, bytes));
     }
   }
 
