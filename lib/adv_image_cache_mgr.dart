@@ -17,7 +17,7 @@ class AdvImageCacheMgr {
     String uid = key.url.hashCode.toString();
     Uint8List data;
 
-    //search loacal copy
+    //search local copy
     final File file = await _getLocalFile(key.diskCacheDirName, uid);
     if (file.existsSync() && file.lengthSync() > 0) {
       data = file.readAsBytesSync();
@@ -28,7 +28,14 @@ class AdvImageCacheMgr {
     }
 
     if (data.length > 0) {
-      _updateMemCache(key, data);
+      //test valid image
+      try {
+        var imgCodec = await PaintingBinding.instance!.instantiateImageCodec(data);
+        _updateMemCache(key, data);
+      } catch (_) {
+        clearItem(key.url, diskCacheDirName: key.diskCacheDirName);
+        data = Uint8List(0);
+      }
     }
 
     return data;

@@ -13,3 +13,6 @@
 ## 1.0.0-nullsafety
 * Add null safety support.
 
+## 1.0.1
+* Add check for downloaded images
+* update dependencies to latest
