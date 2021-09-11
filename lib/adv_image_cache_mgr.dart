@@ -30,7 +30,7 @@ class AdvImageCacheMgr {
     if (data.length > 0) {
       //test valid image
       try {
-        var imgCodec = await PaintingBinding.instance!.instantiateImageCodec(data);
+        await PaintingBinding.instance!.instantiateImageCodec(data);
         _updateMemCache(key, data);
       } catch (_) {
         clearItem(key.url, diskCacheDirName: key.diskCacheDirName);
@@ -102,7 +102,7 @@ class AdvImageCacheMgr {
 
   ImageStreamCompleter _loadImageCache(AdvImageCache key, Uint8List data) {
     return MultiFrameImageStreamCompleter(
-      codec: _loadCodec(data) as Future<ui.Codec>,
+      codec: _loadCodec(data),
       scale: key.scale,
       informationCollector: () sync* {
         yield DiagnosticsProperty<ImageProvider>('Image provider', key);
@@ -111,12 +111,12 @@ class AdvImageCacheMgr {
     );
   }
 
-  Future<ui.Codec?> _loadCodec(Uint8List data) async {
-    if (data.length > 0) {
-      return PaintingBinding.instance!.instantiateImageCodec(data);
+  Future<ui.Codec> _loadCodec(Uint8List data) async {
+    if (data.isEmpty) {
+      throw StateError("Missing Data");
     }
 
-    return null;
+    return PaintingBinding.instance!.instantiateImageCodec(data);
   }
 
   Future<Uint8List> _load(File file, AdvImageCache key) async {

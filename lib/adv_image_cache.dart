@@ -49,24 +49,24 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
   ///fail image
   final String? fallbackAssetImage;
 
-  Future<Codec?> _downloadImage(AdvImageCache key) async {
+  Future<Codec> _downloadImage(AdvImageCache key) async {
     //get image form cache or download
     Uint8List data = await AdvImageCacheMgr().getFileData(key);
 
     //if download image success
-    if (data.length > 0) {
+    if (data.isNotEmpty) {
       return await PaintingBinding.instance!.instantiateImageCodec(data);
     }
 
     //if fallback image is set
-    if (fallbackAssetImage != null) {
-      ByteData imageData = await rootBundle.load(key.fallbackAssetImage!);
-      data = imageData.buffer.asUint8List();
-
-      return await PaintingBinding.instance!.instantiateImageCodec(data);
+    if (fallbackAssetImage == null) {
+      throw StateError("Missing Image");
     }
 
-    return null;
+    ByteData imageData = await rootBundle.load(key.fallbackAssetImage!);
+    data = imageData.buffer.asUint8List();
+
+    return await PaintingBinding.instance!.instantiateImageCodec(data);
   }
 
   @override
@@ -81,22 +81,24 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
     //in mem Cache
     if (key.useMemCache && PaintingBinding.instance!.imageCache!.containsKey(uid)) {
       //we will not call _downloadImage , so request background update
-      AdvImageCacheMgr().cacheAutoUpdate(key);
+      AdvImageCacheMgr().cacheAutoUpdate(key).then((value) => _downloadImage(key));
+
       // we know it is there , so return dummy func to add
       return PaintingBinding.instance!.imageCache!.putIfAbsent(
-          uid,
-          () {
-            return null;
-          } as ImageStreamCompleter Function())!;
+        uid,
+        () {
+          return MultiFrameImageStreamCompleter(
+            codec: _downloadImage(key),
+            scale: key.scale,
+          );
+        },
+      )!;
     } else {
       //not in mem , download and return
       return MultiFrameImageStreamCompleter(
-          codec: _downloadImage(key) as Future<Codec>,
-          scale: key.scale,
-          informationCollector: () sync* {
-            yield DiagnosticsProperty<ImageProvider>('Image provider', this);
-            yield DiagnosticsProperty<AdvImageCache>('Image key', key);
-          });
+        codec: _downloadImage(key),
+        scale: key.scale,
+      );
     }
   }
 }
