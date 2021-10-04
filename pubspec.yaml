@@ -1,6 +1,6 @@
 name: adv_image_cache
 description: network image laod with cache rules , and handy cache manager
-version: 1.0.2
+version: 1.0.3
 #author: Ali ABDALLAH  alisayed@gmail.com
 homepage: https://github.com/ali-abdallah-ali
 
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  path_provider: ^2.0.3
+  path_provider: ^2.0.5
   path: ^1.8.0
   
 dev_dependencies:

@@ -1,3 +1,6 @@
+## 1.0.3
+* fix: bug in image load from cache
+
 ## 1.0.2
 * fix: bug in image load with null-safty cast
 

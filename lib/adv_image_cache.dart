@@ -56,17 +56,16 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
     //if download image success
     if (data.isNotEmpty) {
       return await PaintingBinding.instance!.instantiateImageCodec(data);
+    } else {
+      //if fallback image is set
+      if (fallbackAssetImage == null) {
+        throw StateError("Missing Image");
+      }
+
+      ByteData imageData = await rootBundle.load(key.fallbackAssetImage!);
+      data = imageData.buffer.asUint8List();
+      return await PaintingBinding.instance!.instantiateImageCodec(data);
     }
-
-    //if fallback image is set
-    if (fallbackAssetImage == null) {
-      throw StateError("Missing Image");
-    }
-
-    ByteData imageData = await rootBundle.load(key.fallbackAssetImage!);
-    data = imageData.buffer.asUint8List();
-
-    return await PaintingBinding.instance!.instantiateImageCodec(data);
   }
 
   @override
@@ -80,9 +79,6 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
 
     //in mem Cache
     if (key.useMemCache && PaintingBinding.instance!.imageCache!.containsKey(uid)) {
-      //we will not call _downloadImage , so request background update
-      AdvImageCacheMgr().cacheAutoUpdate(key).then((value) => _downloadImage(key));
-
       // we know it is there , so return dummy func to add
       return PaintingBinding.instance!.imageCache!.putIfAbsent(
         uid,
