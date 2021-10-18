@@ -48,10 +48,15 @@ class AdvImageCacheMgr {
       // Download file with retry
       for (int i = 0; i < key.downloadRetry; i++) {
         HttpClient httpClient = HttpClient();
+        if (key.allowUserCert) {
+          httpClient.badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+        }
+
         final HttpClientRequest request = await httpClient.getUrl(Uri.parse(key.url));
         if (key.header != null) {
           key.header!.forEach((k, v) => request.headers.add(k, v));
         }
+
         final HttpClientResponse response = await request.close();
         final Uint8List bytes = await consolidateHttpClientResponseBytes(response, autoUncompress: false);
         if (bytes.length > 0) {

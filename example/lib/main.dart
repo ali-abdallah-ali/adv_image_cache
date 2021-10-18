@@ -74,7 +74,7 @@ class _MyAppState extends State<MyApp> {
                       Image(
                           image: AdvImageCache(
                         "https://picsum.photos/100/150",
-                        useMemCache: true,
+                        useMemCache: false,
                         diskCacheExpire: Duration(seconds: 0),
                       )),
                     ],

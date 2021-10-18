@@ -24,6 +24,7 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
     this.diskCacheDirName = "AdvImageCache",
     this.diskCacheExpire = const Duration(days: 7),
     this.fallbackAssetImage,
+    this.allowUserCert = false,
   });
 
   String url;
@@ -48,6 +49,9 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
 
   ///fail image
   final String? fallbackAssetImage;
+
+  ///allow user signed cert for tesing
+  final bool allowUserCert;
 
   Future<Codec> _downloadImage(AdvImageCache key) async {
     //get image form cache or download
