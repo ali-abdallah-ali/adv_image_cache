@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
-import 'dart:ui' as ui show Codec;
-
+import 'dart:ui';
 import 'adv_image_cache.dart';
 
 class AdvImageCacheMgr {
@@ -30,7 +28,7 @@ class AdvImageCacheMgr {
     if (data.length > 0) {
       //test valid image
       try {
-        await PaintingBinding.instance!.instantiateImageCodec(data);
+        await PaintingBinding.instance.instantiateImageCodecWithSize(await ImmutableBuffer.fromUint8List(data));
         _updateMemCache(key, data);
       } catch (_) {
         clearItem(key.url, diskCacheDirName: key.diskCacheDirName);
@@ -92,20 +90,20 @@ class AdvImageCacheMgr {
     );
   }
 
-  Future<ui.Codec> _loadCodec(Uint8List data) async {
+  Future<Codec> _loadCodec(Uint8List data) async {
     if (data.isEmpty) {
       throw StateError("Missing Data");
     }
 
-    return PaintingBinding.instance!.instantiateImageCodec(data);
+    return PaintingBinding.instance.instantiateImageCodecWithSize(await ImmutableBuffer.fromUint8List(data));
   }
 
   void _updateMemCache(AdvImageCache key, Uint8List bytes) {
     //if we are using mem cache
     if (key.useMemCache) {
       String uid = key.url.hashCode.toString();
-      PaintingBinding.instance!.imageCache!.evict(uid);
-      PaintingBinding.instance!.imageCache!.putIfAbsent(uid, () => _loadImageCache(key, bytes));
+      PaintingBinding.instance.imageCache.evict(uid);
+      PaintingBinding.instance.imageCache.putIfAbsent(uid, () => _loadImageCache(key, bytes));
     }
   }
 
@@ -139,7 +137,7 @@ class AdvImageCacheMgr {
     try {
       String uid = url.hashCode.toString();
 
-      PaintingBinding.instance!.imageCache!.evict(uid);
+      PaintingBinding.instance.imageCache.evict(uid);
       final File file = await _getLocalFile(diskCacheDirName, uid);
       if (file.existsSync() && file.lengthSync() > 0) {
         file.deleteSync();
@@ -155,7 +153,7 @@ class AdvImageCacheMgr {
 
   Future<bool> clearAllItems({String diskCacheDirName = "AdvImageCache"}) async {
     try {
-      PaintingBinding.instance!.imageCache!.clear();
+      PaintingBinding.instance.imageCache.clear();
       Directory localDir = await _getLocalDir(diskCacheDirName);
       if (localDir.existsSync()) await localDir.delete(recursive: true);
 

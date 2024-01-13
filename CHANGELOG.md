@@ -1,3 +1,6 @@
+## 1.0.5
+* change: support newer flutter 3 SDK
+
 ## 1.0.4
 * add: allow local testing on https URLs by allowing user certificate , with new parameter (allowUserCert)
 

@@ -1,6 +1,6 @@
-import 'dart:typed_data';
 import 'dart:ui';
 import 'dart:async';
+import 'package:adv_image_cache/adv_image_cache_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -53,13 +53,17 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
   ///allow user signed cert for tesing
   final bool allowUserCert;
 
+  Future<String?> getPlatformVersion() {
+    return AdvImageCachePlatform.instance.getPlatformVersion();
+  }
+
   Future<Codec> _downloadImage(AdvImageCache key) async {
     //get image form cache or download
     Uint8List data = await AdvImageCacheMgr().getFileData(key);
 
     //if download image success
     if (data.isNotEmpty) {
-      return await PaintingBinding.instance!.instantiateImageCodec(data);
+      return await PaintingBinding.instance.instantiateImageCodecWithSize(await ImmutableBuffer.fromUint8List(data));
     } else {
       //if fallback image is set
       if (fallbackAssetImage == null) {
@@ -68,7 +72,7 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
 
       ByteData imageData = await rootBundle.load(key.fallbackAssetImage!);
       data = imageData.buffer.asUint8List();
-      return await PaintingBinding.instance!.instantiateImageCodec(data);
+      return await PaintingBinding.instance.instantiateImageCodecWithSize(await ImmutableBuffer.fromUint8List(data));
     }
   }
 
@@ -78,13 +82,13 @@ class AdvImageCache extends ImageProvider<AdvImageCache> {
   }
 
   @override
-  ImageStreamCompleter load(AdvImageCache key, DecoderCallback decode) {
+  ImageStreamCompleter loadImage(AdvImageCache key, ImageDecoderCallback decode) {
     String uid = key.url.hashCode.toString();
 
     //in mem Cache
-    if (key.useMemCache && PaintingBinding.instance!.imageCache!.containsKey(uid)) {
+    if (key.useMemCache && PaintingBinding.instance.imageCache.containsKey(uid)) {
       // we know it is there , so return dummy func to add
-      return PaintingBinding.instance!.imageCache!.putIfAbsent(
+      return PaintingBinding.instance.imageCache.putIfAbsent(
         uid,
         () {
           return MultiFrameImageStreamCompleter(

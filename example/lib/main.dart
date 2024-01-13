@@ -57,7 +57,7 @@ class _MyAppState extends State<MyApp> {
                 Center(
                   child: Column(
                     children: [
-                      Text("7 days cache expire"),
+                      const Text("7 days cache expire"),
                       Image(
                           image: AdvImageCache(
                         "https://picsum.photos/100/160",
@@ -70,12 +70,12 @@ class _MyAppState extends State<MyApp> {
                 Center(
                   child: Column(
                     children: [
-                      Text("0 sec cache expire (always refresh)"),
+                      const Text("0 sec cache expire (always refresh)"),
                       Image(
                           image: AdvImageCache(
                         "https://picsum.photos/100/150",
                         useMemCache: false,
-                        diskCacheExpire: Duration(seconds: 0),
+                        diskCacheExpire: const Duration(seconds: 0),
                       )),
                     ],
                   ),
@@ -88,7 +88,7 @@ class _MyAppState extends State<MyApp> {
                 Center(
                   child: Column(
                     children: [
-                      Text("load fail test"),
+                      const Text("load fail test"),
                       Image(
                           image: AdvImageCache(
                         "https://picsumaaa.photos/100/170",
@@ -100,33 +100,33 @@ class _MyAppState extends State<MyApp> {
                 Center(
                   child: Column(
                     children: [
-                      Text("1 min cache expire"),
+                      const Text("1 min cache expire"),
                       Image(
                           image: AdvImageCache(
                         "https://picsum.photos/100/180",
                         useMemCache: true,
-                        diskCacheExpire: Duration(minutes: 1),
+                        diskCacheExpire: const Duration(minutes: 1),
                       )),
                     ],
                   ),
                 ),
               ],
             ),
-            ElevatedButton(onPressed: () => setState(() {}), child: Text("Reload and test cache rules")),
+            ElevatedButton(onPressed: () => setState(() {}), child: const Text("Reload and test cache rules")),
             ElevatedButton(
                 onPressed: () {
                   setState(() {
                     AdvImageCacheMgr().clearItem("https://picsum.photos/100/160");
                   });
                 },
-                child: Text("force cache clear for 1st Image")),
+                child: const Text("force cache clear for 1st Image")),
             ElevatedButton(
               onPressed: () {
                 setState(() {
                   AdvImageCacheMgr().clearAllItems();
                 });
               },
-              child: Text("force cache clear all items"),
+              child: const Text("force cache clear all items"),
             ),
           ],
         ),
