@@ -14,6 +14,7 @@ import 'adv_image_cache_mgr.dart';
  *  Released under MIT License.
  */
 
+/// load images from web and cache it.
 class AdvImageCache extends ImageProvider<AdvImageCache> {
   AdvImageCache(
     this.url, {

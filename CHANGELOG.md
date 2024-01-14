@@ -1,3 +1,6 @@
+## 1.0.6
+* change: license file
+
 ## 1.0.5
 * change: support newer flutter 3 SDK
 

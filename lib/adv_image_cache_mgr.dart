@@ -107,7 +107,7 @@ class AdvImageCacheMgr {
     }
   }
 
-//background cache update
+//background update image in cache
   Future<void> cacheAutoUpdate(AdvImageCache key) async {
     try {
       String uid = key.url.hashCode.toString();
@@ -120,7 +120,6 @@ class AdvImageCacheMgr {
     }
   }
 
-//background cache update
   Future<void> _cacheAutoUpdate(File file, AdvImageCache key) async {
     try {
       DateTime dt = file.lastModifiedSync();
@@ -133,6 +132,7 @@ class AdvImageCacheMgr {
     }
   }
 
+//delete an image from cache
   Future<bool> clearItem(String url, {String diskCacheDirName = "AdvImageCache"}) async {
     try {
       String uid = url.hashCode.toString();
@@ -151,6 +151,7 @@ class AdvImageCacheMgr {
     return false;
   }
 
+//delete all images from cache
   Future<bool> clearAllItems({String diskCacheDirName = "AdvImageCache"}) async {
     try {
       PaintingBinding.instance.imageCache.clear();
@@ -165,6 +166,7 @@ class AdvImageCacheMgr {
     return false;
   }
 
+//get image cache total size
   Future<int> cacheSize(String diskCacheDirName) async {
     int size = 0;
     try {
